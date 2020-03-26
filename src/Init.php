@@ -16,12 +16,30 @@ class Init
                 $this->configure();
                 return;
             }
-
-            $this->startQueue($_SERVER['REMOTE_ADDR']);
+            $uid="";
+            if(isset($_COOKIE['_qid'])){
+                
+                $uid=$_COOKIE['_qid'];
+            }else{
+                $uid= $this->GUID();
+            }
+            
+            setcookie('_qid', $uid, time() + (730*24*60*60*1000));
+            $this->startQueue($_SERVER['REMOTE_ADDR'],$uid);
             return;
         }
     }
 
+    function GUID()
+    {
+        if (function_exists('com_create_guid') === true)
+        {
+            return trim(com_create_guid(), '{}');
+        }
+    
+        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+    }
+    
     private function usage()
     {
         $filename = __FILE__;
@@ -103,14 +121,15 @@ Visitors
 
 STATUS;
 
-        $mask = "|%9.9s | %-15.15s | %-8.8s |\n";
-        printf($mask, 'Position', 'IP', 'Status');
+        $mask = "|%9.9s | %-15.15s  | %-36.36s| %-8.8s |\n";
+        printf($mask, 'Position', 'IP','uid', 'Status');
         $position = 1;
         foreach ($results['visitors'] as $visitor) {
             printf(
                 $mask,
                 $visitor['position'],
                 long2ip($visitor['ip']),
+                $visitor['uid'],
                 ($visitor['is_queueing']) ? 'Queuing' : 'Browsing'
             );
             if ($visitor['is_queueing'] == 1)
@@ -119,31 +138,35 @@ STATUS;
 
     }
 
-    private function startQueue($ip)
+    private function startQueue($ip,$uid)
     {
-        $data = $this->queue->getDataByIp($ip);
+        $data = $this->queue->getDataByIp($ip,$uid);
 
         // The IP is already accessing the site, so update information
         if ($data) {
-            if ($this->queue->isQueueing($ip)) {
-                if ($this->queue->checkAccess($ip))
-                    return;
 
-                $this->queue->showQueueAndDie($ip); //To queuing page
+            
+            if ($this->queue->isQueueing($ip,$uid)) {
+                if ($this->queue->checkAccess($ip,$uid))
+                {
+                    return;
+                }
+
+                $this->queue->showQueueAndDie($ip,$uid); //To queuing page
                 exit;
             } else {
                 if (is_null($data['entered_at'])) {
-                    $this->queue->insertOrUpdateVisitor($ip, 0);
+                    $this->queue->insertOrUpdateVisitor($ip,$uid, 0);
                 }
 
-                $this->queue->updateVisitorActivity($ip);
+                $this->queue->updateVisitorActivity($ip,$uid);
                 return; //Abort and let the user continue his journey
             }
         } else { //The IP isn't yet in the queue table
-            if ($this->queue->checkAccess($ip))
+            if ($this->queue->checkAccess($ip,$uid))
                 return;
 
-            $this->queue->showQueueAndDie($ip); //To queuing page
+            $this->queue->showQueueAndDie($ip,$uid); //To queuing page
             exit;
         }
     }
@@ -153,6 +176,7 @@ STATUS;
         if ($this->isCli())
             return true;
 
+          
         if (isset($whitelist['enabled']) && $whitelist['enabled'] != true)
             return false;
 
@@ -163,7 +187,7 @@ STATUS;
                     return false;
             }
         }
-
+   
         if (isset($whitelist['uri']) && is_array($whitelist['uri'])) {
             foreach ($whitelist['uri'] as $uri) {
                 $regex = sprintf('#%s#', $uri);
@@ -171,7 +195,7 @@ STATUS;
                     return false;
             }
         }
-
+       
         return true;
     }
 

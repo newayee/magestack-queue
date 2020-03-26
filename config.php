@@ -32,7 +32,7 @@ return [
     // sqlite: For single-server/low volume deployments
     // mysql:  For multi-server/high volume deployments
     'database' => [
-        'driver' => 'sqlite',
+        'driver' => 'mysql',
         'name' => 'queue',
         'user' => '',
         'password' => '',
