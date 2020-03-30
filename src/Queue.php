@@ -160,8 +160,8 @@ class Queue
                     {$isQueuing},
                     '" . date('Y-m-d H:i:s') . "',
                     $position,
-                    " . (time() + $this->getAverageWaitTime()) . "
-                    $waitingTime
+                    " . (time() + $this->getAverageWaitTime()) . ",
+                    {$waitingTime}
                 )";
             $createdAt = date('Y-m-d H:i:s');
         } else {
