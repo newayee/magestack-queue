@@ -139,7 +139,8 @@ class Queue
                     $temp_threshold=$this->threshold;
             }
            
-            $waitingTime = $this->getStatus()['total_visitors']/$temp_threshold* $this->timer;
+            // $waitingTime = $this->getStatus()['total_visitors']/$temp_threshold* $this->timer;
+            $waitingTime = $this->timer;
             // $query = "
             //     INSERT INTO {$this->queueTable} (ip, uid, is_queueing, created_at, position, eta,waiting_time)
             //     VALUES (
@@ -159,7 +160,7 @@ class Queue
                     {$isQueuing},
                     '" . date('Y-m-d H:i:s') . "',
                     $position,
-                    " . (time() + $waitingTime). ",
+                    " . (time() + $this->getAverageWaitTime()) . "
                     $waitingTime
                 )";
             $createdAt = date('Y-m-d H:i:s');
