@@ -4,13 +4,13 @@ return [
     // Perl regular expression format is used for pattern matching
     'whitelist' => [
         'ip' => [
-            '172.16.0..+'
+            //'172.16.0..+'
         ],
         'uri' => [
-            'paypal',
-            'api/v2_soap',
-            'sgps',
-            'admin(_[a-z0-9]+)?'
+            //'paypal',
+            //'api/v2_soap',
+            //'sgps',
+            //'admin(_[a-z0-9]+)?'
         ],
     ],
 
