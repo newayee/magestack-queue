@@ -1,3 +1,6 @@
+> This is a fork of original https://github.com/sonassi/magestack-queue with https://github.com/tommwu/magestack-queue change 
+> to use GUID in cookie in addition to IP. Check changelog for specifics. 
+
 # MageStack Queue
 
 MageStack Queue is a supporting module to provide queuing functionality on busy websites - where you want to control the volume of visitors on the website; either to prevent excessive load or to create the atmosphere of demand.
@@ -204,3 +207,16 @@ location ~* ^/my-queue-dir {
     deny all;
 }
 ~~~~
+
+## Changelog (for this fork)
+
+### 1.2.0 03-08-2020 / Peeter Marvet
+
+* updated composer.json with support for PHP up to 7.4.*
+* removed outdated Adminer from /lib
+* made cookie configurable (inc. secure flag, __Host prefix)
+* added whitelist / length check to GUID retrieved from cookie (to prevent SQLi)
+* buffered ip+uid DB request
+* made requests by queued visitors increase latest update in db (to avoid them dropping out)
+* updated queue template to latest Bootstrap
+* some reformatting & removal of commented-out code
