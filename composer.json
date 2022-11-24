@@ -9,7 +9,6 @@
         "reference": "master"
     },
     "require": {
-        "ext-sqlite3": "*",
         "php": ">=5.4.0"
     },
     "autoload": {
