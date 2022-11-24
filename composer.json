@@ -1,16 +1,16 @@
 {
-    "name": "petskratt/magestack-queue",
+    "name": "newayee/magestack-queue",
     "description": "MageStack queuing module for all PHP applications",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "type": "package",
     "source": {
-        "url": "git://github.com/petskratt/magestack-queue.git",
+        "url": "git://github.com/newayee/magestack-queue.git",
         "type": "git",
         "reference": "master"
     },
     "require": {
         "ext-sqlite3": "*",
-        "php": ">= 5.4.* <=~7.4.*"
+        "php": ">=5.4.0"
     },
     "autoload": {
         "psr-4": {

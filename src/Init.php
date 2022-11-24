@@ -4,7 +4,7 @@ namespace MageStack\Queue;
 
 class Init {
 	public function __construct() {
-		$this->config = include realpath( __DIR__ ) . '/../config.php';
+		$this->config = include realpath(__DIR__) . '/../../../../../env-config/magestack-config.php';
 
 		if ( $this->shouldInit( $this->config['whitelist'] ) && $this->config['enabled'] ) {
 

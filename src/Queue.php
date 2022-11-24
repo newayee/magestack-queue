@@ -8,7 +8,7 @@ use MageStack\Queue\Backend\MySQL;
 class Queue {
 
 	protected $db = null;
-	protected $path = null;
+	protected $templatePath = null;
 
 	protected $tableName = null;
 	protected $threshold = null;
@@ -30,16 +30,16 @@ class Queue {
 		}
 
 		$this->queueTable = $config['database']['queue_table'];
-		$this->threshold  = $config['threshold'];
-		$this->timer      = $config['timer'];
-		$this->path       = $config['path'];
-		$this->gaCode     = $config['ga_code'];
+		$this->threshold = $config['threshold'];
+		$this->timer = $config['timer'];
+		$this->templatePath = $config['templatePath'];
+		$this->gaCode = $config['ga_code'];
 
 		return $this;
 	}
 
 	public function createTable() {
-		$query  = "DROP TABLE {$this->queueTable};";
+		$query  = "DROP TABLE IF EXISTS {$this->queueTable};";
 		$result = $this->db->exec( $query );
 
 		$query  = "
@@ -318,7 +318,7 @@ class Queue {
 		$stats['eta']      = round( ( $stats['eta'] - time() ) / 60, 0 );
 		$stats['position'] = ( $stats['position'] == 0 ) ? '~' : $stats['position'];
 
-		$template = file_get_contents( $this->path . '/src/view/queue-landing.phtml' );
+		$template = file_get_contents( $this->templatePath );
 		$template = str_ireplace(
 			[
 				'{{queue.position}}',
